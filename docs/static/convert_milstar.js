@@ -14,6 +14,7 @@ const REGEX_PATTERNS = {
 // State
 let currentPdfFile = null;
 let transactions = [];
+let currentFileName = null;
 
 // DOM Elements
 const elements = {
@@ -34,6 +35,7 @@ elements.downloadButton.disabled = true;
 // File handling functions
 async function handleFileSelection(file) {
     currentPdfFile = file;
+    currentFileName = file.name.replace(/\.pdf$/i, ''); // Store filename without extension
     elements.fileInfo.textContent = `Selected: ${file.name}`;
     elements.dropZone.classList.add('has-file');
     elements.processButton.disabled = false;
@@ -190,7 +192,7 @@ function downloadCsv() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'milstar_transactions.csv';
+    a.download = `${currentFileName}.csv`;
     a.click();
 }
 
