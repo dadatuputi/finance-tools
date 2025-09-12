@@ -5,7 +5,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = '../static/pdf.worker.3.11.174.min.js';
 
 // Constants and regex patterns
 const REGEX_PATTERNS = {
-    transactions: /Transactions\n ?\nDate\n ?\nDescription\n ?\nReference #\n ?\nLocation\n ?\nAmount\n ?\n(.*?)Interest Charge Calculations/s,
+    transactions: /Transactions\n ?\nDate\n ?\nDescription\n ?\n(?:Reference #\n ?\n)?Location\n ?\nAmount\n ?\n(.*?)Interest Charge Calculations/s,
     transaction: /(?<Date>\d{1,2}\s\w+\s\d{4})\n ?\n?(?<Memo>Charge|Return|ACH Online Pymt|Principal Credit Adj\.|Principal Debit Adj\.|Promo Plan Swap)\n ?\n?(?<Ref>[\d ]+)?\n ?\n?(?<Payee>[\w\. ]+)\n ?\n?(?<Outflow>-{0,1}[$\.\d]+)/g,
     fees: /Fees\n ?\n?Date\n ?\n?Description\n ?\n?Amount\n ?\n?(?<Fees>.*)Total Fees for This Period/s,
     fee: /(?<Date>\d{1,2}\s\w+\s\d{4})\n ?\n?(?<Memo>.+?)\n ?\n?(?<Outflow>-{0,1}[$\.\d]+)/g
@@ -107,10 +107,14 @@ function extractTransactions(text) {
     // Extract regular transactions
     const transactionMatch = text.match(REGEX_PATTERNS.transactions);
     if (transactionMatch) {
+        console.log(`Found transactions: ${transactionMatch}`)
         let match;
         while ((match = REGEX_PATTERNS.transaction.exec(transactionMatch[1])) !== null) {
             transactions.push(match.groups);
         }
+        console.log(`Found ${transactions.length}`)
+    } else {
+        console.log('Found no transactions.')
     }
 
     // Extract fees
