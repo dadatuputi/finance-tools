@@ -1,6 +1,6 @@
 
 // Configure PDF.js
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/finance-tools/static/pdf.worker.3.11.174.min.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc = '../static/pdf.worker.3.11.174.min.js';
 
 
 // Constants and regex patterns
