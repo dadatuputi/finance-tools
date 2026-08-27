@@ -3,35 +3,46 @@
 pdfjsLib.GlobalWorkerOptions.workerSrc = '../static/pdf.worker.3.11.174.min.js';
 
 
-// Constants and regex patterns
+// Statement parsing
 //
-// Statement text is normalised into one line per visual row before matching (see
-// extractLines) so that patterns can key off whole table rows. This matters because
-// the statement generator regularly splits a heading's first letter into its own text
-// item ("I" + "nterest Charge Calculations"), which broke naive matching on the raw
-// concatenated text.
+// MyECP statements are untagged PDFs (Aspose.PDF for Java) - there is no table
+// structure to read, only positioned text fragments. Rather than pattern-matching the
+// text, the tables are recovered geometrically: the row that spells out the column
+// headings defines an x-position for each column, and every fragment on the rows below
+// is filed under whichever column it sits in.
+//
+// That keeps the parser out of the business of predicting the statement's wording. A
+// row is a transaction because its Date cell holds a date and its Amount cell holds an
+// amount - not because its description matches a list, its reference number is a single
+// value, or the table is followed by a particular heading. All three of those have
+// changed between statement versions and silently dropped transactions when they did.
+const COLUMN_LABELS = ['Date', 'Description', 'Reference #', 'Location', 'Amount'];
+
+// Account Summary lines on page 1, used to check the parsed tables add up. Keyed
+// without whitespace so that a label split across text fragments still matches.
+const SUMMARY_LABELS = {
+    'Purchases/OtherDebits': 'debits',
+    'Payments/OtherCredits': 'credits',
+    'FeesCharged': 'fees'
+};
+
+// How many fragments a summary label may be split across
+const MAX_LABEL_FRAGMENTS = 4;
+
 const MONTHS = {
     jan: '01', feb: '02', mar: '03', apr: '04', may: '05', jun: '06',
     jul: '07', aug: '08', sep: '09', oct: '10', nov: '11', dec: '12'
 };
 
-const MEMO_TYPES = 'Charge|Return|ACH Online Pymt|Principal Credit Adj\\.|Principal Debit Adj\\.|Promo Plan Swap';
-const DATE = '\\d{1,2}\\s+[A-Za-z]+\\s+\\d{4}';
-const AMOUNT = '-?\\$?[\\d,]+\\.\\d{2}';
+const DATE_CELL = /^\d{1,2} [A-Za-z]{3,9} \d{4}$/;
+const MONEY_CELL = /^-?\$?[\d,]+\.\d{2}$/;
+const FEE_PAYEE = 'MilitaryStar Card Fee';
 
-const REGEX_PATTERNS = {
-    // Column headings that open each table
-    transactionsHeader: /^Date\s+Description\s+(?:Reference #\s+)?Location\s+Amount$/i,
-    feesHeader: /^Date\s+Description\s+Amount$/i,
-    // Headings that close a table
-    sectionEnd: /^(?:Interest Charge Calculations|Important Notices|Terms and Conditions|Total Fees for This Period|\d{4} Year to Date)/i,
-    // Table rows
-    transaction: new RegExp(`^(?<Date>${DATE})\\s+(?<Memo>${MEMO_TYPES})\\s+(?<Rest>.*?)\\s*(?<Outflow>${AMOUNT})$`),
-    fee: new RegExp(`^(?<Date>${DATE})\\s+(?<Memo>.+?)\\s+(?<Outflow>${AMOUNT})$`),
-    // Leading reference numbers in the Reference # column (statements may carry more
-    // than one, e.g. the reference number followed by the purchase date as DDMMYYYY)
-    reference: /^((?:\d{4,}(?:\s+|$))+)(.*)$/
-};
+// Fragments within this many points of each other vertically are on the same line
+const BASELINE_TOLERANCE = 2;
+
+// How far left of a column's heading a fragment may start and still belong to it
+const COLUMN_TOLERANCE = 2;
 
 // State
 let pdfFiles = [];
@@ -80,7 +91,7 @@ function onFileListChanged() {
     // Any previously generated CSV no longer matches the selection
     transactions = [];
     elements.csvContent.innerHTML = '';
-    elements.csvSummary.textContent = '';
+    elements.csvSummary.innerHTML = '';
     elements.downloadButton.disabled = true;
 
     elements.processButton.disabled = pdfFiles.length === 0;
@@ -175,13 +186,13 @@ async function processPdfs() {
 
     for (const file of pdfFiles) {
         try {
-            const text = await getPdfText(file);
-            const found = extractTransactions(text);
-            results.push({name: file.name, transactions: found});
-            console.log(`${file.name}: found ${found.length} transactions`);
+            const pages = await readPages(file);
+            const result = parseStatement(pages);
+            results.push(Object.assign({name: file.name}, result));
+            console.log(`${file.name}: found ${result.transactions.length} transactions`, result.reconciliation);
         } catch (error) {
             console.error(`Error processing ${file.name}:`, error);
-            results.push({name: file.name, transactions: [], error: error.message});
+            results.push({name: file.name, transactions: [], reconciliation: [], error: error.message});
         }
     }
 
@@ -194,117 +205,110 @@ async function processPdfs() {
     displayTransactions(transactions);
 }
 
-async function getPdfText(file) {
+async function readPages(file) {
     const pdf = await loadPdf(file);
 
-    let lines = [];
+    const pages = [];
     for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        lines = lines.concat(extractLines(textContent));
+        pages.push(groupIntoRows((await page.getTextContent()).items));
     }
-    return lines;
+    return pages;
 }
 
-// Rebuild the visual lines of a page from PDF.js text items.
-//
-// PDF.js hands back a stream of small text fragments; a single table row arrives as a
-// dozen of them. Joining them blindly (with newlines or nothing) splits words that the
-// statement draws in pieces, so fragments are grouped by their baseline instead, with a
-// space inserted wherever there is a horizontal gap between fragments.
-function extractLines(textContent) {
-    const lines = [];
-    let current = '';
-    let baseline = null;
-    let previousEnd = null;
+// Group text fragments into the rows they visually form, top to bottom, each row's
+// fragments ordered left to right. PDF.js emits fragments in drawing order, which is
+// not necessarily reading order, so position is the only thing to go on.
+function groupIntoRows(items) {
+    const rows = [];
 
-    const pushLine = () => {
-        const line = current.replace(/\s+/g, ' ').trim();
-        if (line) lines.push(line);
-        current = '';
-        previousEnd = null;
-    };
+    for (const item of items) {
+        if (!item.str.trim()) continue;
 
-    for (const item of textContent.items) {
-        const x = item.transform[4];
         const y = item.transform[5];
-
-        if (baseline !== null && Math.abs(y - baseline) > 2) pushLine();
-        baseline = y;
-
-        if (current && previousEnd !== null && x > previousEnd + 1) current += ' ';
-        current += item.str;
-        previousEnd = x + (item.width || 0);
-
-        if (item.hasEOL) {
-            pushLine();
-            baseline = null;
+        let row = rows.find(candidate => Math.abs(candidate.y - y) <= BASELINE_TOLERANCE);
+        if (!row) {
+            row = {y, fragments: []};
+            rows.push(row);
         }
+        row.fragments.push({x: item.transform[4], text: item.str});
     }
-    pushLine();
 
-    return lines;
+    rows.sort((a, b) => b.y - a.y);
+    rows.forEach(row => row.fragments.sort((a, b) => a.x - b.x));
+    return rows;
 }
 
-function extractTransactions(lines) {
+// A row that spells out the column headings defines the grid for the rows beneath it.
+// The transactions table and the Fees table are both described this way, so both are
+// read by the same code; the Fees table simply has no Location column.
+function readColumns(row) {
+    const labels = row.fragments.filter(fragment => COLUMN_LABELS.includes(fragment.text.trim()));
+    if (labels.length < 3) return null;
+
+    const names = labels.map(label => label.text.trim());
+    if (!names.includes('Date') || !names.includes('Amount')) return null;
+
+    return labels.map(label => ({name: label.text.trim(), x: label.x}));
+}
+
+// File each fragment under the column it starts in
+function readCells(row, columns) {
+    const cells = {};
+    columns.forEach(column => { cells[column.name] = ''; });
+
+    for (const fragment of row.fragments) {
+        let index = 0;
+        while (index + 1 < columns.length && fragment.x >= columns[index + 1].x - COLUMN_TOLERANCE) index++;
+
+        const name = columns[index].name;
+        cells[name] = cells[name] ? `${cells[name]} ${fragment.text}` : fragment.text;
+    }
+
+    Object.keys(cells).forEach(name => { cells[name] = cells[name].replace(/\s+/g, ' ').trim(); });
+    return cells;
+}
+
+function parseStatement(pages) {
     const found = [];
-    let table = null;
+    const totals = {};
 
-    for (const line of lines) {
-        // A heading opens a table; statements repeat the heading on every page they span
-        if (REGEX_PATTERNS.transactionsHeader.test(line)) {
-            table = 'transactions';
-            continue;
-        }
-        if (REGEX_PATTERNS.feesHeader.test(line)) {
-            table = 'fees';
-            continue;
-        }
-        if (!table) continue;
-        if (REGEX_PATTERNS.sectionEnd.test(line)) {
-            table = null;
-            continue;
-        }
+    for (const rows of pages) {
+        let columns = null; // headings are repeated on every page a table spans
 
-        const pattern = table === 'transactions' ? REGEX_PATTERNS.transaction : REGEX_PATTERNS.fee;
-        const match = line.match(pattern);
-        if (!match) continue;
+        for (const row of rows) {
+            const heading = readColumns(row);
+            if (heading) {
+                columns = heading;
+                continue;
+            }
 
-        found.push(table === 'transactions'
-            ? buildTransaction(match.groups)
-            : buildFee(match.groups));
+            readSummaryTotal(row, totals);
+            if (!columns) continue;
+
+            const cells = readCells(row, columns);
+            // A row is a transaction because of what its cells hold, not what they say
+            if (!DATE_CELL.test(cells['Date']) || !MONEY_CELL.test(cells['Amount'])) continue;
+
+            found.push(buildTransaction(cells));
+        }
     }
 
     if (!found.length) console.log('Found no transactions.');
-    return found;
+    return {transactions: found, reconciliation: reconcile(found, totals)};
 }
 
-function buildTransaction({Date: date, Memo: memo, Rest: rest, Outflow: outflow}) {
-    // Whatever sits between the description and the amount is the reference number(s)
-    // followed by the location
-    let reference = '';
-    let payee = rest.trim();
-
-    const match = payee.match(REGEX_PATTERNS.reference);
-    if (match) {
-        reference = match[1].trim();
-        payee = match[2].trim();
-    }
+function buildTransaction(cells) {
+    const description = cells['Description'] || '';
+    const reference = cells['Reference #'] || '';
+    // The Fees table has no Location column, so its rows are the card's own fees
+    const isFee = !('Location' in cells);
 
     return {
-        Date: formatDate(date),
-        Memo: reference ? `${memo}: ${reference}` : memo,
-        Payee: payee,
-        Outflow: outflow
-    };
-}
-
-function buildFee({Date: date, Memo: memo, Outflow: outflow}) {
-    return {
-        Date: formatDate(date),
-        Memo: memo.trim(),
-        Payee: 'MilitaryStar Card Fee',
-        Outflow: outflow
+        Date: formatDate(cells['Date']),
+        Memo: reference ? `${description}: ${reference}` : description,
+        Payee: isFee ? FEE_PAYEE : (cells['Location'] || ''),
+        Outflow: cells['Amount']
     };
 }
 
@@ -317,17 +321,96 @@ function formatDate(date) {
     return `${year}-${monthNumber}-${day.padStart(2, '0')}`;
 }
 
+// The statement's own Account Summary is a checksum for the tables below it: record the
+// value of any summary label we know.
+//
+// The label is matched against the fragments themselves rather than the whole row,
+// because page 1 is laid out in two columns - a summary label shares its baseline with
+// whatever unrelated paragraph sits beside it. Fragments are joined while looking for a
+// label so that a label the generator split across fragments still matches.
+function readSummaryTotal(row, totals) {
+    const compact = text => text.replace(/\s+/g, '');
+
+    for (let start = 0; start < row.fragments.length; start++) {
+        let label = '';
+
+        for (let end = start; end < row.fragments.length && end - start < MAX_LABEL_FRAGMENTS; end++) {
+            label += row.fragments[end].text;
+
+            const key = SUMMARY_LABELS[compact(label)];
+            if (!key || key in totals) continue;
+
+            // The value is the next fragment along the same line
+            const value = (row.fragments[end + 1] || {}).text;
+            if (value && MONEY_CELL.test(value.trim())) totals[key] = toCents(value.trim());
+        }
+    }
+}
+
+function toCents(amount) {
+    return Math.round(parseFloat(amount.replace(/[$,]/g, '')) * 100);
+}
+
+// Compare what was parsed against what the statement says it contains, so that a table
+// this parser only partly understood is reported rather than quietly exported.
+function reconcile(found, totals) {
+    const sum = predicate => found
+        .filter(predicate)
+        .reduce((total, transaction) => total + toCents(transaction.Outflow), 0);
+
+    const fees = transaction => transaction.Payee === FEE_PAYEE;
+    const charge = transaction => !fees(transaction) && toCents(transaction.Outflow) >= 0;
+    const credit = transaction => !fees(transaction) && toCents(transaction.Outflow) < 0;
+
+    const checks = [
+        {label: 'Purchases/Other Debits', expected: totals.debits, actual: sum(charge)},
+        {label: 'Payments/Other Credits', expected: totals.credits, actual: sum(credit)},
+        {label: 'Fees Charged', expected: totals.fees, actual: sum(fees)}
+    ];
+
+    // Only report on totals the statement actually stated
+    return checks
+        .filter(check => check.expected !== undefined)
+        .map(check => Object.assign({balanced: check.expected === check.actual}, check));
+}
+
+function formatCents(cents) {
+    const sign = cents < 0 ? '-' : '';
+    return `${sign}$${(Math.abs(cents) / 100).toFixed(2)}`;
+}
+
 // Display and download functions
 function displaySummary(results) {
+    elements.csvSummary.innerHTML = '';
+
     const total = results.reduce((sum, result) => sum + result.transactions.length, 0);
-    const parts = [`${total} transaction${total === 1 ? '' : 's'} from ${results.length} PDF${results.length === 1 ? '' : 's'}`];
+    const heading = document.createElement('div');
+    heading.textContent = `${total} transaction${total === 1 ? '' : 's'} from ` +
+        `${results.length} PDF${results.length === 1 ? '' : 's'}`;
+    elements.csvSummary.appendChild(heading);
 
-    const empty = results.filter(result => !result.transactions.length);
-    if (empty.length) {
-        parts.push(`No transactions found in: ${empty.map(result => result.name).join(', ')}`);
-    }
+    results.forEach(result => {
+        const problems = result.reconciliation.filter(check => !check.balanced);
+        if (result.transactions.length && !problems.length && !result.error) return;
 
-    elements.csvSummary.textContent = parts.join(' — ');
+        const line = document.createElement('div');
+        line.className = 'warning';
+
+        if (result.error) {
+            line.textContent = `${result.name}: could not be read (${result.error})`;
+        } else if (!result.transactions.length) {
+            line.textContent = `${result.name}: no transactions found`;
+        } else {
+            // The statement disagrees with what was parsed out of it - say so rather
+            // than handing over a CSV that is quietly missing rows
+            const detail = problems
+                .map(check => `${check.label} is ${formatCents(check.expected)}, found ${formatCents(check.actual)}`)
+                .join('; ');
+            line.textContent = `${result.name}: does not match the statement totals — ${detail}. Check the preview.`;
+        }
+
+        elements.csvSummary.appendChild(line);
+    });
 }
 
 function displayTransactions(transactions) {
