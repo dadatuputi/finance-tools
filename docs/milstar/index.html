@@ -10,21 +10,21 @@
     <div class="intro">
         <h1>🌟 Military Star Statement Converter</h1>
 
-        <p>Convert your Military Star Card statement PDF into a CSV file for importing into budgeting software</p>
+        <p>Convert one or more Military Star Card statement PDFs into a single CSV file for importing into budgeting software</p>
         
         <ol start="0">
-           <li>Download your Military Star statement from the <a href="https://www.myecp.com/">Military Star website</a></li>
-           <li>Upload your Military Star statement using the box below</li>
-           <li>Click <code>Process PDF</code> to extract transactions</li>
-           <li>Download the CSV file for your budgeting software</li>
+           <li>Download your Military Star statement(s) from the <a href="https://www.myecp.com/">Military Star website</a></li>
+           <li>Upload one or more Military Star statements using the box below</li>
+           <li>Click <code>Process PDFs</code> to extract transactions</li>
+           <li>Download a single CSV file covering every statement you uploaded</li>
         </ol>
     </div>
 
     <div class="drop-zone numbered-box" id="dropZone">
         <div class="box-number">1</div>
-        <p>Drag and drop your MilStar PDF here<br>or click to select file</p>
+        <p>Drag and drop your MilStar PDFs here<br>or click to select files</p>
         <div class="file-info" id="fileInfo"></div>
-        <input type="file" id="pdfInput" accept=".pdf" style="display: none;" />
+        <input type="file" id="pdfInput" accept=".pdf" multiple style="display: none;" />
     </div>
 
     <div class="container">
@@ -32,7 +32,7 @@
             <div class="box-number">2</div>
             <div class="header">
                 <h3>PDF Preview</h3>
-                <button id="processButton" disabled>Process PDF</button>
+                <button id="processButton" disabled>Process PDFs</button>
             </div>
             <div id="pdfContainer"></div>
         </div>
@@ -42,6 +42,7 @@
                 <h3>CSV Preview</h3>
                 <button id="downloadCsv" disabled>Download CSV</button>
             </div>
+            <div class="summary" id="csvSummary"></div>
             <div id="csvContent"></div>
         </div>
     </div>

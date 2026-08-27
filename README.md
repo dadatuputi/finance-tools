@@ -8,7 +8,8 @@ Browser-based tools for converting financial statements to CSV format for budget
 
 Convert Military Star Card PDF statements to CSV files.
 
-- Drag-and-drop PDF upload
+- Drag-and-drop PDF upload - one statement or many at once
+- Multiple statements are merged into a single, date-sorted CSV
 - Side-by-side PDF and CSV preview
 - One-click CSV download
 
