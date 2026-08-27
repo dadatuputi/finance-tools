@@ -23,6 +23,7 @@
     <div class="drop-zone numbered-box" id="dropZone">
         <div class="box-number">1</div>
         <p>Drag and drop your MilStar PDFs here<br>or click to select files</p>
+        <p class="drop-hint">Add as many statements as you like — they are combined into one CSV</p>
         <div class="file-info" id="fileInfo"></div>
         <input type="file" id="pdfInput" accept=".pdf" multiple style="display: none;" />
     </div>
@@ -39,7 +40,7 @@
         <div class="csv-viewer numbered-box">
             <div class="box-number">3</div>
             <div class="header">
-                <h3>CSV Preview</h3>
+                <h3>Combined CSV Preview</h3>
                 <button id="downloadCsv" disabled>Download CSV</button>
             </div>
             <div class="summary" id="csvSummary"></div>

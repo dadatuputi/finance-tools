@@ -284,3 +284,15 @@ td.editable:focus {
     color: #b26a00;
     margin-top: 4px;
 }
+
+.nav-description {
+    font-size: 0.85em;
+    color: #666;
+    max-width: 200px;
+}
+
+.drop-hint {
+    margin-top: 8px;
+    font-size: 0.9em;
+    color: #888;
+}

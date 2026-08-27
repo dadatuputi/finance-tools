@@ -1,0 +1,60 @@
+name: Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Statement dates are formatted by hand rather than through Date precisely so
+        # that they do not shift with the timezone. Asia/Tokyo is ahead of UTC, which
+        # is where deriving them through Date reported the previous day.
+        timezone: [UTC, Asia/Tokyo]
+        # The oldest version package.json claims to support, and current
+        node: [20, 22]
+
+    name: test (node ${{ matrix.node }}, ${{ matrix.timezone }})
+
+    env:
+      TZ: ${{ matrix.timezone }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      # No dependencies to install: PDF.js is vendored in docs/static and the tests
+      # run on node:test
+      - name: Run tests
+        run: npm test
+
+  fixtures:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # The fixtures are generated, so they must match their generator
+      - name: Check the committed fixtures are up to date
+        run: |
+          npm run fixtures
+          # --porcelain rather than 'git diff' so that a fixture added but not
+          # committed is caught too
+          if [ -n "$(git status --porcelain test/fixtures)" ]; then
+            git status --short test/fixtures
+            echo "::error::test/fixtures is out of date - run 'npm run fixtures' and commit the result"
+            exit 1
+          fi
