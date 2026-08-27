@@ -1,0 +1,13 @@
+{
+  "name": "finance-tools",
+  "private": true,
+  "description": "Browser-based tools for converting financial statements to CSV",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "fixtures": "node test/tools/make-fixtures.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

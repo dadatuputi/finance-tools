@@ -1,0 +1,134 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Length 1195 >>
+stream
+BT /F1 8 Tf 1 0 0 1 373.4 648.8 Tm (Account Summary) Tj ET
+BT /F1 8 Tf 1 0 0 1 373.4 637.3 Tm (Previous Balance) Tj ET
+BT /F1 8 Tf 1 0 0 1 443.4 637.3 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 563.5 637.3 Tm ($0.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 373.4 625.8 Tm (Purchases/Other Debits) Tj ET
+BT /F1 8 Tf 1 0 0 1 443.4 625.8 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 563.5 625.8 Tm ($90.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 373.4 614.3 Tm (Payments/Other Credits) Tj ET
+BT /F1 8 Tf 1 0 0 1 443.4 614.3 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 563.5 614.3 Tm (-$100.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 60 614.3 Tm (Late Payment Warning: Payment reversals/returned checks may require) Tj ET
+BT /F1 8 Tf 1 0 0 1 373.4 602.8 Tm (Fees Charged) Tj ET
+BT /F1 8 Tf 1 0 0 1 443.4 602.8 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 563.5 602.8 Tm ($0.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 373.4 591.3 Tm (Interest Charged) Tj ET
+BT /F1 8 Tf 1 0 0 1 443.4 591.3 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 563.5 591.3 Tm ($0.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 373.4 579.8 Tm (New Balance) Tj ET
+BT /F1 8 Tf 1 0 0 1 443.4 579.8 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 563.5 579.8 Tm ($90.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 63 500 Tm (ayment Information) Tj ET
+BT /F1 8 Tf 1 0 0 1 60 500 Tm (P) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 4294 >>
+stream
+BT /F1 8 Tf 1 0 0 1 57.6 711.3 Tm (ransactions) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.6 711.3 Tm (T) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.6 697.3 Tm (Date) Tj ET
+BT /F1 8 Tf 1 0 0 1 79.6 697.3 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 114.4 697.3 Tm (Description) Tj ET
+BT /F1 8 Tf 1 0 0 1 139.4 697.3 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 261.2 697.3 Tm (Reference #) Tj ET
+BT /F1 8 Tf 1 0 0 1 286.2 697.3 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 392.1 697.3 Tm (Location) Tj ET
+BT /F1 8 Tf 1 0 0 1 417.1 697.3 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 559.3 697.3 Tm (Amount) Tj ET
+BT /F1 8 Tf 1 0 0 1 584.3 697.3 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.6 687.6999999999999 Tm (06 Jul 2026) Tj ET
+BT /F1 8 Tf 1 0 0 1 79.6 687.6999999999999 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 114.4 687.6999999999999 Tm (Charge) Tj ET
+BT /F1 8 Tf 1 0 0 1 139.4 687.6999999999999 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 261.2 687.6999999999999 Tm (1000000001) Tj ET
+BT /F1 8 Tf 1 0 0 1 286.2 687.6999999999999 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 323.7 687.6999999999999 Tm (05072026) Tj ET
+BT /F1 8 Tf 1 0 0 1 348.7 687.6999999999999 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 392.1 687.6999999999999 Tm (EXAMPLE-STORE.com) Tj ET
+BT /F1 8 Tf 1 0 0 1 417.1 687.6999999999999 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 559.3 687.6999999999999 Tm ($20.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 584.3 687.6999999999999 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.6 677.9999999999999 Tm (10 Jul 2026) Tj ET
+BT /F1 8 Tf 1 0 0 1 79.6 677.9999999999999 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 114.4 677.9999999999999 Tm (ACH Online Pymt) Tj ET
+BT /F1 8 Tf 1 0 0 1 139.4 677.9999999999999 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 392.1 677.9999999999999 Tm (ECP Payment) Tj ET
+BT /F1 8 Tf 1 0 0 1 417.1 677.9999999999999 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 559.3 677.9999999999999 Tm (-$100.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 584.3 677.9999999999999 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.6 668.2999999999998 Tm (20 Jul 2026) Tj ET
+BT /F1 8 Tf 1 0 0 1 79.6 668.2999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 114.4 668.2999999999998 Tm (Charge) Tj ET
+BT /F1 8 Tf 1 0 0 1 139.4 668.2999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 261.2 668.2999999999998 Tm (1000000002) Tj ET
+BT /F1 8 Tf 1 0 0 1 286.2 668.2999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 323.7 668.2999999999998 Tm (19072026) Tj ET
+BT /F1 8 Tf 1 0 0 1 348.7 668.2999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 392.1 668.2999999999998 Tm (EXAMPLE-STORE.com) Tj ET
+BT /F1 8 Tf 1 0 0 1 417.1 668.2999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 559.3 668.2999999999998 Tm ($30.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 584.3 668.2999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.6 658.5999999999998 Tm (25 Jul 2026) Tj ET
+BT /F1 8 Tf 1 0 0 1 79.6 658.5999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 114.4 658.5999999999998 Tm (Charge) Tj ET
+BT /F1 8 Tf 1 0 0 1 139.4 658.5999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 261.2 658.5999999999998 Tm (1000000002) Tj ET
+BT /F1 8 Tf 1 0 0 1 286.2 658.5999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 323.7 658.5999999999998 Tm (19072026) Tj ET
+BT /F1 8 Tf 1 0 0 1 348.7 658.5999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 392.1 658.5999999999998 Tm (EXAMPLE-STORE.com) Tj ET
+BT /F1 8 Tf 1 0 0 1 417.1 658.5999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 559.3 658.5999999999998 Tm ($40.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 584.3 658.5999999999998 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 57.6 641.8999999999997 Tm (nterest Charge Calculations) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.6 641.8999999999997 Tm (I) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.6 628.8999999999997 Tm (Your Annual Percentage Rate \(APR\) is the annual interest rate on your account.) Tj ET
+BT /F1 8 Tf 1 0 0 1 53.9 586.8999999999997 Tm (Exchange Retail) Tj ET
+BT /F1 8 Tf 1 0 0 1 120 586.8999999999997 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 399.8 586.8999999999997 Tm (0.00%\(v\)) Tj ET
+BT /F1 8 Tf 1 0 0 1 441 586.8999999999997 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 496.7 586.8999999999997 Tm ($0.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 520 586.8999999999997 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 570.7 586.8999999999997 Tm ($0.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 222 536.8999999999997 Tm (2026 Year to Date Fees) Tj ET
+BT /F1 8 Tf 1 0 0 1 324 536.8999999999997 Tm ( ) Tj ET
+BT /F1 8 Tf 1 0 0 1 405.8 536.8999999999997 Tm ($0.00) Tj ET
+BT /F1 8 Tf 1 0 0 1 57.6 506.89999999999975 Tm (mportant Notices) Tj ET
+BT /F1 8 Tf 1 0 0 1 54.6 506.89999999999975 Tm (I) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000001465 00000 n 
+0000001591 00000 n 
+0000005937 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+6063
+%%EOF

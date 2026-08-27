@@ -29,6 +29,8 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     height: 700px;
     overflow-y: visible;
+    display: flex;
+    flex-direction: column;
 }
 .header {
     display: flex;
@@ -219,4 +221,78 @@ td.editable:focus {
     text-align: center;
     margin-bottom: 40px;
     color: #333;
+}
+.file-list {
+    list-style: none;
+    margin: 10px auto 0;
+    padding: 0;
+    max-width: 500px;
+    text-align: left;
+}
+
+.file-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.file-list li + li {
+    margin-top: 4px;
+}
+
+.file-remove {
+    background: none;
+    color: #999;
+    border: none;
+    padding: 0 4px;
+    margin: 0;
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+.file-remove:hover {
+    background: none;
+    color: #d32f2f;
+}
+
+.pdf-title {
+    margin: 0 0 10px;
+    font-size: 0.95em;
+    color: #666;
+    word-break: break-all;
+}
+
+.pdf-title + canvas {
+    margin-top: 0;
+}
+
+.summary {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.error {
+    color: #d32f2f;
+}
+
+.warning {
+    color: #b26a00;
+    margin-top: 4px;
+}
+
+.nav-description {
+    font-size: 0.85em;
+    color: #666;
+    max-width: 200px;
+}
+
+.drop-hint {
+    margin-top: 8px;
+    font-size: 0.9em;
+    color: #888;
 }

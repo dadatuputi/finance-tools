@@ -8,7 +8,8 @@ Browser-based tools for converting financial statements to CSV format for budget
 
 Convert Military Star Card PDF statements to CSV files.
 
-- Drag-and-drop PDF upload
+- Drag-and-drop PDF upload - one statement or many at once
+- Multiple statements are merged into a single, date-sorted CSV
 - Side-by-side PDF and CSV preview
 - One-click CSV download
 
@@ -28,9 +29,23 @@ All processing happens in your browser - your data never leaves your device.
 ## 🚀 Usage
 
 1. Choose your converter
-2. Upload your statement/export
+2. Upload your statement/export — the Military Star converter takes any number of statements at once
 3. Preview and edit if needed
 4. Download CSV!
+
+## 🧪 Development
+
+The site is static: everything under `docs/` is served as-is by GitHub Pages, with no
+build step.
+
+```sh
+npm test           # parse a statement fixture for each known format, check the results
+npm run fixtures   # rebuild the test fixtures
+```
+
+The tests need only Node 20+; there are no dependencies to install. They parse a
+fixture for each statement layout MyECP has been seen to produce — `test/fixtures/README.md`
+lists them and explains how to pin the next one.
 
 ## 🙏 Credits
 
